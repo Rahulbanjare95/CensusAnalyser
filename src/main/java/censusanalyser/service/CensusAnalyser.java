@@ -1,4 +1,5 @@
 package censusanalyser.service;
+import CsvBuilder.CsvBuilderException;
 import censusanalyser.model.IndiaCensusCSV;
 import censusanalyser.exceptions.CensusAnalyserException;
 import censusanalyser.model.IndiaStateCodeCSV;
@@ -19,6 +20,8 @@ public class CensusAnalyser {
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (RuntimeException e) {
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_DELIMITER_HEADER);
+        } catch (CsvBuilderException e) {
+            throw new CensusAnalyserException(e.getMessage(), e.type.name());
         }
     }
     public int loadIndiaStateData(String csvFilePath) throws CensusAnalyserException {
@@ -29,7 +32,10 @@ public class CensusAnalyser {
         } catch (IOException e) {
             System.out.println("In I/O Exception");
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
-        } catch (RuntimeException e) {
+        }catch (CsvBuilderException e){
+            throw new CensusAnalyserException(e.getMessage(), e.type.name());
+        }
+        catch (RuntimeException e) {
             System.out.println("In runtime");
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_DELIMITER_HEADER);
         }
