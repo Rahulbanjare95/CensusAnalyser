@@ -13,12 +13,9 @@ import java.util.stream.StreamSupport;
 
 public class CensusAnalyser {
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
-        try {
-            Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
+        try ( Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));){
             Iterator<IndiaCensusCSV> censusCSVIterator = this.getCSVFileIterator(reader,IndiaCensusCSV.class);
-            Iterable<IndiaCensusCSV> csvIterable = () -> censusCSVIterator;
-            int numOfEnteries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
-            return numOfEnteries;
+            return this.getCount(censusCSVIterator);
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (RuntimeException e) {
@@ -26,12 +23,9 @@ public class CensusAnalyser {
         }
     }
     public int loadIndiaStateData(String csvFilePath) throws CensusAnalyserException {
-        try {
-            Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
-            Iterator<IndiaStateCodeCSV> stateCSVIterator = this.getCSVFileIterator(reader, IndiaStateCodeCSV.class);
-            Iterable<IndiaStateCodeCSV> csvIterable = () -> stateCSVIterator;
-            int numOfEnteries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
-            return numOfEnteries;
+        try ( Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));){
+          Iterator<IndiaStateCodeCSV> stateCSVIterator = this.getCSVFileIterator(reader, IndiaStateCodeCSV.class);
+            return this.getCount(stateCSVIterator);
         } catch (IOException e) {
             System.out.println("In I/O Exception");
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
@@ -39,6 +33,11 @@ public class CensusAnalyser {
             System.out.println("In runtime");
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_DELIMITER_HEADER);
         }
+    }
+    private <E>int getCount(Iterator<E> iterator){
+        Iterable<E> csvIterable = () -> iterator;
+        int numOfEnteries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
+        return numOfEnteries;
     }
     private <E> Iterator<E> getCSVFileIterator(Reader reader,
                                                Class csvClass) throws CensusAnalyserException {
