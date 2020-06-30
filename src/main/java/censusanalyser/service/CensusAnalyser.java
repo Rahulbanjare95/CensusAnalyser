@@ -12,7 +12,8 @@ import java.util.stream.StreamSupport;
 public class CensusAnalyser {
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
         try ( Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));){
-            Iterator<IndiaCensusCSV> censusCSVIterator = new OpenCsvBuilder().getCSVFileIterator(reader, IndiaCensusCSV.class);
+            ICsvBuilder csvBuilder = CsvBuilderFactory.createCSVBuilder();// gives object
+            Iterator<IndiaCensusCSV> censusCSVIterator = csvBuilder.getCSVFileIterator(reader, IndiaCensusCSV.class);
             return this.getCount(censusCSVIterator);
         } catch (IOException e) {
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
@@ -22,7 +23,8 @@ public class CensusAnalyser {
     }
     public int loadIndiaStateData(String csvFilePath) throws CensusAnalyserException {
         try ( Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));){
-            Iterator<IndiaStateCodeCSV> stateCSVIterator = new OpenCsvBuilder().getCSVFileIterator(reader, IndiaStateCodeCSV.class);
+            ICsvBuilder csvBuilder = CsvBuilderFactory.createCSVBuilder();
+            Iterator<IndiaStateCodeCSV> stateCSVIterator = csvBuilder.getCSVFileIterator(reader, IndiaStateCodeCSV.class);
             return this.getCount(stateCSVIterator);
         } catch (IOException e) {
             System.out.println("In I/O Exception");
@@ -37,5 +39,4 @@ public class CensusAnalyser {
         int numOfEnteries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
         return numOfEnteries;
     }
-
 }
