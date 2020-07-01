@@ -1,8 +1,12 @@
 package censusanalyser.service;
+
 import CsvBuilder.CsvBuilderException;
-import censusanalyser.model.IndiaCensusCSV;
+import CsvBuilder.CsvBuilderFactory;
+import CsvBuilder.ICsvBuilder;
 import censusanalyser.exceptions.CensusAnalyserException;
+import censusanalyser.model.IndiaCensusCSV;
 import censusanalyser.model.IndiaStateCodeCSV;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -13,7 +17,7 @@ import java.util.stream.StreamSupport;
 public class CensusAnalyser {
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
         try ( Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));){
-            ICsvBuilder csvBuilder = CsvBuilderFactory.createCSVBuilder();// gives object
+            ICsvBuilder csvBuilder = CsvBuilderFactory.createCSVBuilder();
             Iterator<IndiaCensusCSV> censusCSVIterator = csvBuilder.getCSVFileIterator(reader, IndiaCensusCSV.class);
             return this.getCount(censusCSVIterator);
         } catch (IOException e) {
