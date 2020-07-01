@@ -20,7 +20,7 @@ public class CensusAnalyser {
     List<IndiaStateCodeCSV> stateCSVList = null;
 
     public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
-        try ( Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));){
+        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCSVBuilder();
             censusCSVList = csvBuilder.getCSVFileList(reader, IndiaCensusCSV.class);
             return censusCSVList.size();
@@ -32,39 +32,42 @@ public class CensusAnalyser {
             throw new CensusAnalyserException(e.getMessage(), e.type.name());
         }
     }
+
     public int loadIndiaStateData(String csvFilePath) throws CensusAnalyserException {
-        try ( Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));){
+        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCSVBuilder();
             stateCSVList = csvBuilder.getCSVFileList(reader, IndiaStateCodeCSV.class);
             return this.stateCSVList.size();
         } catch (IOException e) {
             System.out.println("In I/O Exception");
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
-        }catch (CsvBuilderException e){
+        } catch (CsvBuilderException e) {
             throw new CensusAnalyserException(e.getMessage(), e.type.name());
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             System.out.println("In runtime");
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.WRONG_DELIMITER_HEADER);
         }
     }
-    private <E>int getCount(Iterator<E> iterator){
+
+    private <E> int getCount(Iterator<E> iterator) {
         Iterable<E> csvIterable = () -> iterator;
         int numOfEnteries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
         return numOfEnteries;
     }
+
     public String getStateWiseSortedCensusData() throws CensusAnalyserException {
-        if (censusCSVList == null || censusCSVList.size() == 0){
-            throw  new CensusAnalyserException("No Census data found",CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+        if (censusCSVList == null || censusCSVList.size() == 0) {
+            throw new CensusAnalyserException("No Census data found", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         }
         Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.state);
         this.sort(censusComparator, censusCSVList);
         String sortedStateCensusJson = new Gson().toJson(censusCSVList);
         return sortedStateCensusJson;
     }
+
     public String getStateWiseSortedStateCodeData() throws CensusAnalyserException {
-        if (stateCSVList == null || stateCSVList.size() == 0){
-            throw  new CensusAnalyserException("No Census data found",CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+        if (stateCSVList == null || stateCSVList.size() == 0) {
+            throw new CensusAnalyserException("No Census data found", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         }
         Comparator<IndiaStateCodeCSV> stateCodeComparator = Comparator.comparing(state -> state.stateCode);
         this.sort(stateCodeComparator, stateCSVList);
@@ -72,17 +75,16 @@ public class CensusAnalyser {
         return sortedStateCensusJson;
     }
 
-    private <E> void sort( Comparator<E>censusComparator, List<E> list ){
-        for (int i =0; i < list.size()-1; i++ ){
-            for (int j = 0; j < list.size()-1; j++){
+    private <E> void sort(Comparator<E> censusComparator, List<E> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = 0; j < list.size() - 1; j++) {
                 E census1 = (E) list.get(j);
-                E census2 = (E) list.get(j+1);
-                if (censusComparator.compare(census1, census2) > 0){
+                E census2 = (E) list.get(j + 1);
+                if (censusComparator.compare(census1, census2) > 0) {
                     list.set(j, census2);
-                    list.set(j+1, census1);
+                    list.set(j + 1, census1);
                 }
             }
         }
-
     }
 }
