@@ -92,6 +92,15 @@ public class CensusAnalyser {
         String sortedPopulationDensity = new Gson().toJson(censusCSVList);
         return sortedPopulationDensity;
     }
+    public String getStateWiseSortedCensusDataOnArea() throws CensusAnalyserException {
+        if (censusCSVList == null || censusCSVList.size() == 0){
+            throw  new CensusAnalyserException("No census data found", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+        }
+        Comparator<IndiaCensusCSV> censusCSVComparator = Comparator.comparing(census -> census.areaInSqKm);
+        this.sortDescending(censusCSVComparator, censusCSVList);
+        String sortedPopulationDensity = new Gson().toJson(censusCSVList);
+        return sortedPopulationDensity;
+    }
 
     private <E> void sort(Comparator<E> censusComparator, List<E> list) {
         for (int i = 0; i < list.size() - 1; i++) {
@@ -117,6 +126,7 @@ public class CensusAnalyser {
             }
         }
     }
+
 
 
 }
