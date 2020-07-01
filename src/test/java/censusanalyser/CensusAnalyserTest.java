@@ -2,6 +2,7 @@ package censusanalyser;
 
 import censusanalyser.exceptions.CensusAnalyserException;
 import censusanalyser.model.IndiaCensusCSV;
+import censusanalyser.model.IndiaStateCodeCSV;
 import censusanalyser.service.CensusAnalyser;
 import com.google.gson.Gson;
 import org.junit.Assert;
@@ -146,6 +147,22 @@ public class CensusAnalyserTest {
             String sortedCensusData = censusAnalyser.getStateWiseSortedCensusData();
             IndiaCensusCSV[] indiaCensusCsv = new Gson().fromJson(sortedCensusData, IndiaCensusCSV[].class);
             Assert.assertEquals("Andhra Pradesh", indiaCensusCsv[0].state);
+            Assert.assertEquals("West Bengal", indiaCensusCsv[28].state);
+        } catch (CensusAnalyserException e) {
+            Assert.assertEquals(CensusAnalyserException.ExceptionType.WRONG_DELIMITER_HEADER,e.type);
+        }
+    }
+
+    @Test
+    public void givenindianStateData_WhenSorted_OnStateCode_ShouldReturnSortedResult() {
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadIndiaStateData(INDIA_STATE_CODE_CSV_FILE_PATH);
+            String sortedCodeData = censusAnalyser.getStateWiseSortedStateCodeData();
+            IndiaStateCodeCSV[] indiaStateCodeCsv = new Gson().fromJson(sortedCodeData, IndiaStateCodeCSV[].class);
+            Assert.assertEquals("AD", indiaStateCodeCsv[0].stateCode);
+            Assert.assertEquals("WB", indiaStateCodeCsv[36].stateCode);
+
         } catch (CensusAnalyserException e) {
             e.printStackTrace();
         }
