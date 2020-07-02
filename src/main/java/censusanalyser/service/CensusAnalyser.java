@@ -173,6 +173,26 @@ public class CensusAnalyser {
         String sortedPopulation = new Gson().toJson(usCensusCSVList);
         return sortedPopulation;
     }
+
+    public String getPopulationDensityWiseSortedUSCensusData() throws CensusAnalyserException {
+        if (usCensusCSVList == null || usCensusCSVList.size() == 0) {
+            throw new CensusAnalyserException("No census data found", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+        }
+        Comparator<USCensusCSV> censusCSVComparator = Comparator.comparing(census -> census.populationDensity);
+        this.sortDescending(censusCSVComparator, usCensusCSVList);
+        String sortedPopulation = new Gson().toJson(usCensusCSVList);
+        return sortedPopulation;
+    }
+
+    public String getHousingUnitWiseSortedUSCensusData() throws CensusAnalyserException {
+        if (usCensusCSVList == null || usCensusCSVList.size() == 0) {
+            throw new CensusAnalyserException("No census data found", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+        }
+        Comparator<USCensusCSV> censusCSVComparator = Comparator.comparing(census -> census.housingUnits);
+        this.sortDescending(censusCSVComparator, usCensusCSVList);
+        String sortedPopulation = new Gson().toJson(usCensusCSVList);
+        return sortedPopulation;
+    }
 }
 
 
