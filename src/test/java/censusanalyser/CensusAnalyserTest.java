@@ -237,4 +237,30 @@ public class CensusAnalyserTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void givenUSCensusData_whenSorted_OnPopulationDensity_ShouldReturnMostToLeast() {
+        try{
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadUSCensusData(US_CENSUS_DATA_CSV_FILE_PATH);
+            String sortedCensusData = censusAnalyser.getPopulationDensityWiseSortedUSCensusData();
+            USCensusCSV[] usCensusCsv = new Gson().fromJson(sortedCensusData, USCensusCSV[].class);
+            Assert.assertEquals((Double) 3805.61,usCensusCsv[0].populationDensity);
+            Assert.assertEquals((Double)0.46,usCensusCsv[usCensusCsv.length-1].populationDensity);
+        } catch (CensusAnalyserException e) {
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void givenUSCensusData_whenSorted_OnHousingUnits_ShouldReturnMostToLeast() {
+        try{
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadUSCensusData(US_CENSUS_DATA_CSV_FILE_PATH);
+            String sortedCensusData = censusAnalyser.getHousingUnitWiseSortedUSCensusData();
+            USCensusCSV[] usCensusCsv = new Gson().fromJson(sortedCensusData, USCensusCSV[].class);
+            Assert.assertEquals( 13680081,usCensusCsv[0].housingUnits);
+            Assert.assertEquals( 261868,usCensusCsv[usCensusCsv.length-1].housingUnits);
+        } catch (CensusAnalyserException e) {
+            e.printStackTrace();
+        }
+    }
 }
