@@ -276,5 +276,19 @@ public class CensusAnalyserTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void givenUSCensusData_whenSorted_OnWaterArea_ShouldReturnMostToLeast() {
+        try{
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadUSCensusData(US_CENSUS_DATA_CSV_FILE_PATH);
+            String sortedCensusData = censusAnalyser.getWaterAreaWiseSortedUSCensusData();
+            USCensusCSV[] usCensusCsv = new Gson().fromJson(sortedCensusData, USCensusCSV[].class);
+            Assert.assertEquals((Double) 245383.68,usCensusCsv[0].waterArea);
+            Assert.assertEquals((Double) 18.88,usCensusCsv[usCensusCsv.length-1].waterArea);
+        } catch (CensusAnalyserException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
