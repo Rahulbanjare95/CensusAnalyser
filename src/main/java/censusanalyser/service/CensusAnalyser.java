@@ -193,6 +193,16 @@ public class CensusAnalyser {
         String sortedPopulation = new Gson().toJson(usCensusCSVList);
         return sortedPopulation;
     }
+
+    public String getTotalAreaWiseSortedUSCensusData() throws CensusAnalyserException {
+        if (usCensusCSVList == null || usCensusCSVList.size() == 0) {
+            throw new CensusAnalyserException("No census data found", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
+        }
+        Comparator<USCensusCSV> censusCSVComparator = Comparator.comparing(census -> census.totalArea);
+        this.sortDescending(censusCSVComparator, usCensusCSVList);
+        String sortedPopulation = new Gson().toJson(usCensusCSVList);
+        return sortedPopulation;
+    }
 }
 
 
