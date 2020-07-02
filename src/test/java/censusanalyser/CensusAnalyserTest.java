@@ -263,4 +263,18 @@ public class CensusAnalyserTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void givenUSCensusData_whenSorted_OnTotalArea_ShouldReturnMostToLeast() {
+        try{
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadUSCensusData(US_CENSUS_DATA_CSV_FILE_PATH);
+            String sortedCensusData = censusAnalyser.getTotalAreaWiseSortedUSCensusData();
+            USCensusCSV[] usCensusCsv = new Gson().fromJson(sortedCensusData, USCensusCSV[].class);
+            Assert.assertEquals((Double) 1723338.01,usCensusCsv[0].totalArea);
+            Assert.assertEquals((Double) 177.0,usCensusCsv[usCensusCsv.length-1].totalArea);
+        } catch (CensusAnalyserException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
