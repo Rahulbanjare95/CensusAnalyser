@@ -289,6 +289,20 @@ public class CensusAnalyserTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void givenUSCensusData_whenSorted_OnHousingDensity_ShouldReturnMostToLeast() {
+        try{
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            censusAnalyser.loadUSCensusData(US_CENSUS_DATA_CSV_FILE_PATH);
+            String sortedCensusData = censusAnalyser.getHousingDensityWiseSortedUSCensusData();
+            USCensusCSV[] usCensusCsv = new Gson().fromJson(sortedCensusData, USCensusCSV[].class);
+            Assert.assertEquals((Double) 1876.61,usCensusCsv[0].housingDensity);
+            Assert.assertEquals((Double) 0.19,usCensusCsv[usCensusCsv.length-1].housingDensity);
+        } catch (CensusAnalyserException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 }
