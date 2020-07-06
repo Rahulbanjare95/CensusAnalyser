@@ -178,4 +178,13 @@ public class CensusAnalyser {
         writerJson(censusDAOList,"housingDensityUS.json");
         return sortedPopulation;
     }
+    public String getMostPopulousState(String...csvFilePath) throws CensusAnalyserException, IOException {
+        this.loadCensusData(Country.INDIA,csvFilePath[0]);
+        CensusDAO[] censusIndia = new Gson().fromJson(this.getStateWiseSortedCensusDataOnPopulation(),CensusDAO[].class);
+        this.loadCensusData(Country.US,csvFilePath[1]);
+        CensusDAO[] censusUS = new Gson().fromJson(this.getPopulationWiseSortedUSCensusData(), CensusDAO[].class);
+        if (Double.compare(censusIndia[0].population,censusUS[0].population)>0)
+            return censusIndia[0].state;
+        return censusUS[0].state;
+    }
 }

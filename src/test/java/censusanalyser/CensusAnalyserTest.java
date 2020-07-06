@@ -316,4 +316,16 @@ public class CensusAnalyserTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void getMostPopulousStateInCountries()  {
+        CensusAnalyser censusAnalyser = new CensusAnalyser();
+        try {
+            String mostPopulous = censusAnalyser.getMostPopulousState(INDIA_CENSUS_CSV_FILE_PATH,US_CENSUS_DATA_CSV_FILE_PATH);
+            Assert.assertEquals("Uttar Pradesh",mostPopulous);
+        } catch (CensusAnalyserException | IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
