@@ -19,8 +19,15 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 public class CensusLoader {
+    public Map<String , CensusDAO> loadCensusData(CensusAnalyser.Country country, String ... csvFilePath) throws CensusAnalyserException {
+         if (country.equals(CensusAnalyser.Country.INDIA))
+             return this.loadCensusData(IndiaCensusCSV.class, csvFilePath);
+         else if (country.equals(CensusAnalyser.Country.US))
+             return  this.loadCensusData(USCensusCSV.class, csvFilePath);
+         throw new CensusAnalyserException("Country Not Present", CensusAnalyserException.ExceptionType.NO_SUCH_COUNTRY);
+    }
 
-    public  <E>  Map<String, CensusDAO> loadCensusData(Class<E> csvClass, String... csvFilePath) throws CensusAnalyserException {
+    private   <E>  Map<String, CensusDAO> loadCensusData( Class<E> csvClass, String... csvFilePath) throws CensusAnalyserException {
         Map<String, CensusDAO> censusMap = new HashMap<>();
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath[0]));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCSVBuilder();
