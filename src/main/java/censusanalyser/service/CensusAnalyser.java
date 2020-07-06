@@ -1,10 +1,8 @@
 package censusanalyser.service;
-
 import censusanalyser.exceptions.CensusAnalyserException;
 import censusanalyser.model.CensusDAO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Comparator;
@@ -16,19 +14,27 @@ import java.util.stream.Collectors;
 public class CensusAnalyser {
 
     public enum Country{ INDIA, US };
-    Map<String, CensusDAO> censusMap = null;
+    Map<String, CensusDAO> censusMap = new HashMap<>();
 
-    public CensusAnalyser() {
-        this.censusMap= new HashMap<>();
-    }
+    /**
+     * loadCensusData loads the required csv files and returns a map
+     * @param country Takes the enum constant
+     * @param csvFilePath Takes the path of csv file
+     * @return censusMap size
+     * @throws CensusAnalyserException while loading csv file
+     */
     public int loadCensusData(Country country, String ... csvFilePath) throws CensusAnalyserException {
         censusMap = new CensusLoader().loadCensusData(country, csvFilePath);
         return  censusMap.size();
     }
 
-
-
-    public String getStateWiseSortedCensusData() throws CensusAnalyserException, IOException {
+    /**
+     * compares the information about state in IndiaCensusCSV file
+      *@return sorted state  data in json format
+     * @throws CensusAnalyserException custom exception when no data is given
+     * @throws IOException when error is encountered while creating json
+     */
+    public String getStateWiseSortedCensusData() throws CensusAnalyserException {
         if (censusMap == null || censusMap.size() == 0) {
             throw new CensusAnalyserException("No census data found", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         }
@@ -36,7 +42,11 @@ public class CensusAnalyser {
                 .collect(Collectors.toList());
         censusDAOList.sort(Comparator.comparing((CensusDAO c) -> c.state));
         String sortedStateCensusJson = new Gson().toJson(censusDAOList);
-        writerJson(censusDAOList,"stateWiseIndiaSorted.json");
+        try {
+            writerJson(censusDAOList,"stateWiseIndiaSorted.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return sortedStateCensusJson;
     }
 
@@ -96,6 +106,12 @@ public class CensusAnalyser {
         return sortedPopulationDensity;
     }
 
+    /**
+     *  Method writee a json file when a list is given
+      * @param listTowriteJson contains list for which file has to be written
+     * @param filePath path where file is to be written
+     * @throws IOException to handle error while creating json file
+     */
     private void writerJson(List listTowriteJson, String filePath) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         FileWriter fileWriter = new FileWriter(filePath);
@@ -103,6 +119,12 @@ public class CensusAnalyser {
         fileWriter.close();
     }
 
+    /**
+     * Sorts US census data on basis of fields specified
+     * @return sorted json file
+     * @throws CensusAnalyserException
+     * @throws IOException
+     */
     public String getPopulationWiseSortedUSCensusData() throws CensusAnalyserException, IOException {
         if (censusMap == null || censusMap.size() == 0) {
             throw new CensusAnalyserException("No census data found", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
@@ -178,12 +200,20 @@ public class CensusAnalyser {
         writerJson(censusDAOList,"housingDensityUS.json");
         return sortedPopulation;
     }
+
+    /**
+     * @param csvFilePath Used options to read multiple files in an array where 0 corresponds to IndiaCensusCSV file
+     *                    and 1 corresponds to USCensusCSV file
+     * @return most populous state when compared on population density
+     * @throws CensusAnalyserException thrown at runtime
+     * @throws IOException thrown while loading csv file
+     */
     public String getMostPopulousState(String...csvFilePath) throws CensusAnalyserException, IOException {
         this.loadCensusData(Country.INDIA,csvFilePath[0]);
-        CensusDAO[] censusIndia = new Gson().fromJson(this.getStateWiseSortedCensusDataOnPopulation(),CensusDAO[].class);
+        CensusDAO[] censusIndia = new Gson().fromJson(this.getStateWiseSortedCensusDataOnPopulationDensity(),CensusDAO[].class);
         this.loadCensusData(Country.US,csvFilePath[1]);
-        CensusDAO[] censusUS = new Gson().fromJson(this.getPopulationWiseSortedUSCensusData(), CensusDAO[].class);
-        if (Double.compare(censusIndia[0].population,censusUS[0].population)>0)
+        CensusDAO[] censusUS = new Gson().fromJson(this.getHousingDensityWiseSortedUSCensusData(), CensusDAO[].class);
+        if (Double.compare(censusIndia[0].densityPerSqKm,censusUS[0].populationDensity)>0)
             return censusIndia[0].state;
         return censusUS[0].state;
     }
