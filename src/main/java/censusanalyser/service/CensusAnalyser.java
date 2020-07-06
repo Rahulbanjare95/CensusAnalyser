@@ -1,40 +1,31 @@
 package censusanalyser.service;
 
-import CsvBuilder.CsvBuilderException;
-import CsvBuilder.CsvBuilderFactory;
-import CsvBuilder.ICsvBuilder;
 import censusanalyser.exceptions.CensusAnalyserException;
 import censusanalyser.model.CensusDAO;
-import censusanalyser.model.IndiaCensusCSV;
-import censusanalyser.model.IndiaStateCodeCSV;
-import censusanalyser.model.USCensusCSV;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class CensusAnalyser {
 
+    public enum Country{ INDIA, US };
     Map<String, CensusDAO> censusMap = null;
 
     public CensusAnalyser() {
         this.censusMap= new HashMap<>();
     }
-    public int loadIndiaCensusData(String ... csvFilePath) throws CensusAnalyserException {
-        censusMap = new CensusLoader().loadCensusData(IndiaCensusCSV.class, csvFilePath);
+    public int loadCensusData(Country country, String ... csvFilePath) throws CensusAnalyserException {
+        censusMap = new CensusLoader().loadCensusData(country, csvFilePath);
         return  censusMap.size();
     }
-    public int loadUSCensusData(String csvFilePath) throws CensusAnalyserException {
-        censusMap = new CensusLoader().loadCensusData(USCensusCSV.class, csvFilePath);
-        return censusMap.size();
-    }
+
 
 
     public String getStateWiseSortedCensusData() throws CensusAnalyserException, IOException {
