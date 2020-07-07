@@ -24,7 +24,7 @@ public class CensusAnalyser {
      * @throws CensusAnalyserException while loading csv file
      */
     public int loadCensusData(Country country, String ... csvFilePath) throws CensusAnalyserException {
-        censusMap = new CensusLoader().loadCensusData(country, csvFilePath);
+        censusMap = CensusAdapterFactory.getCensusData(country,csvFilePath);
         return  censusMap.size();
     }
 
@@ -70,7 +70,6 @@ public class CensusAnalyser {
         if (censusMap == null || censusMap.size() == 0) {
             throw new CensusAnalyserException("No census data found", CensusAnalyserException.ExceptionType.NO_CENSUS_DATA);
         }
-        Comparator<CensusDAO> populationComparator = Comparator.comparing(census -> census.population);
         List<CensusDAO> censusDAOList =censusMap.values().stream()
                 .collect(Collectors.toList());
         censusDAOList.sort((CensusDAO c1 , CensusDAO c2)-> c2.population-c1.population);
