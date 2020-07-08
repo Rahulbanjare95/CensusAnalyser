@@ -1,4 +1,4 @@
-package censusanalyser.service;
+package censusanalyser.adapters;
 
 import CsvBuilder.CsvBuilderException;
 import CsvBuilder.CsvBuilderFactory;
@@ -20,9 +20,10 @@ import java.util.stream.StreamSupport;
 public abstract class CensusAdapter {
     public abstract  Map<String , CensusDAO> loadCensusData(String ...  csvFilePath)
             throws CensusAnalyserException;
-    public <E>  Map<String, CensusDAO> loadCensusData(Class<E> csvClass, String csvFilePath) throws CensusAnalyserException {
+    public   <E>  Map<String, CensusDAO> loadCensusData(Class<E> csvClass, String ...csvFilePath)
+                                                                throws CensusAnalyserException {
         Map<String, CensusDAO> censusMap = new HashMap<>();
-        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
+        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath[0]));) {
             ICsvBuilder csvBuilder = CsvBuilderFactory.createCSVBuilder();
             Iterator<E> csvFileIterator = csvBuilder.getCSVFileIterator(reader, csvClass);
             Iterable<E> censusCSVIterable = () -> csvFileIterator;

@@ -1,4 +1,4 @@
-package censusanalyser.service;
+package censusanalyser.adapters;
 import CsvBuilder.CsvBuilderException;
 import CsvBuilder.CsvBuilderFactory;
 import CsvBuilder.ICsvBuilder;
@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
-public class IndiaCensusAdapter extends CensusAdapter  {
+public class IndiaCensusAdapter extends CensusAdapter {
     @Override
     public Map<String, CensusDAO> loadCensusData(String... csvFilePath) throws CensusAnalyserException {
         Map<String, CensusDAO> censusMap = super.loadCensusData(IndiaCensusCSV.class,csvFilePath[0]);
