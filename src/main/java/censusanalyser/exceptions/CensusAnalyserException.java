@@ -1,10 +1,8 @@
 package censusanalyser.exceptions;
 
-import censusanalyser.service.CensusAnalyser;
-
 public class CensusAnalyserException extends Exception {
     public enum ExceptionType {
-        CENSUS_FILE_PROBLEM, UNABLE_TO_PARSE, WRONG_DELIMITER_HEADER ;
+        CENSUS_FILE_PROBLEM, UNABLE_TO_PARSE, WRONG_DELIMITER_HEADER, NO_CENSUS_DATA, NO_SUCH_COUNTRY;
     }
     public ExceptionType type;
     public CensusAnalyserException(String message, String name){

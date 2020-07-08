@@ -2,7 +2,7 @@ package censusanalyser;
 
 import censusanalyser.exceptions.CensusAnalyserException;
 import censusanalyser.model.CensusDAO;
-import censusanalyser.service.CensusAdapterFactory;
+import censusanalyser.adapters.CensusAdapterFactory;
 import censusanalyser.service.CensusAnalyser;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,7 +44,7 @@ public class CensusAnalyserMockitoTest {
         this.censusUSA.put("Delaware", new CensusDAO( "DE","Delaware",897934,405885,6445.76,1399.06,5046.7,177.92,80.43));
     }
     @Test
-    public void givenIndiaCensusFile_ShouldReturnCorrectRecordsForDummyInputs() throws CensusAnalyserException {
+    public void givenIndiaCensusFile_ShouldReturnCorrectRecordsForDummyInputs(){
         try {
             CensusAnalyser censusAnalyser = mock(CensusAnalyser.class);
             when(censusAnalyser.loadCensusData(CensusAnalyser.Country.INDIA, INDIA_CENSUS_CSV_FILE_PATH, INDIA_STATE_CODE_CSV_FILE_PATH))
